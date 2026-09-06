@@ -77,14 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Your Name — Creative Developer Portfolio" },
-      { name: "description", content: "A creative developer portfolio for thoughtful digital products, experiments, and community-led work." },
-      { name: "author", content: "Your Name" },
-      { property: "og:title", content: "Your Name — Creative Developer Portfolio" },
-      { property: "og:description", content: "A creative developer portfolio for thoughtful digital products and experiments." },
+      { title: "Kintan Jain | AI & Web Developer" },
+      { name: "description", content: "Kintan Jain — AI and web developer, automation enthusiast, and community leader." },
+      { name: "author", content: "Kintan Jain" },
+      { property: "og:title", content: "Kintan Jain | AI & Web Developer" },
+      { property: "og:description", content: "AI and web developer, automation enthusiast, and community leader." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -92,6 +91,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@400;500;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
