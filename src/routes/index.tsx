@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { GalaxyPreloader } from "@/components/GalaxyPreloader";
 import { createFileRoute } from "@tanstack/react-router";
-import { MeteorBackground } from "@/components/meteors";
+// import { MeteorBackground } from "@/components/meteors";
 import AchievementsCarousel, { AchievementItem } from "@/components/achievements-carousel";
 import {
   ArrowDown,
@@ -28,8 +29,8 @@ import AutoScroll from "embla-carousel-auto-scroll";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sita Ganesh | AI & Full Stack Developer" },
-      { name: "description", content: "Sita Ganesh — AI and full stack developer focused on backend systems, automation, and hackathon-driven innovation." },
+      { title: "Sita Ganesh | Software Engineer" },
+      { name: "description", content: "Sita Ganesh — Software Engineer, Building Backend Systems & AI-Powered Applications" },
     ],
   }),
   component: Portfolio,
@@ -215,18 +216,15 @@ function useReveal() {
 
 function Portfolio() {
   const [loaded, setLoaded] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
   const [hackathonProgress, setHackathonProgress] = useState(0);
   const hackathonSectionRef = useRef<HTMLElement | null>(null);
   const visible = useReveal();
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setLoaded(true), 1400);
-    return () => window.clearTimeout(timer);
-  }, []);
+  const handlePreloaderFinished = useCallback(() => setLoaded(true), []);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
-    return () => document.documentElement.classList.remove("dark");
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
   }, [dark]);
   useEffect(() => {
     let frame = 0;
@@ -260,118 +258,134 @@ function Portfolio() {
   const reveal = (id: string) => `reveal ${visible.has(id) ? "is-visible" : ""}`;
 
   return (
-    <div className={`portfolio-shell ${loaded ? "is-loaded" : ""}`}>
-      <div className="loader" aria-hidden={loaded}>
-        <div className="loader-field" aria-hidden="true">
-          <div className="loader-grid" />
-          <div className="loader-orbit loader-orbit-one" />
-          <div className="loader-orbit loader-orbit-two" />
-          <div className="loader-orbit loader-orbit-three" />
-          <div className="loader-scan" />
-        </div>
-        <div className="loader-content">
-          <strong>KJ<span>.</span></strong>
-          <h2>Portfolio Loading...</h2>
-          <div className="loader-progress"><i /></div>
-        </div>
+    <>
+      {!loaded && <GalaxyPreloader onFinished={handlePreloaderFinished} />}
+      <div className={`portfolio-shell ${loaded ? "is-loaded" : ""}`}>
+
+
+
+        <main id="top" className="page-wrap bg-transparent">
+          <section id="hero" data-reveal="hero">
+            <div className="mx-auto w-full max-w-2xl space-y-8">
+              <div className="gap-2 flex justify-between">
+                <div className="flex-col flex flex-1 space-y-1.5">
+                  <div className="flex">
+                    <span className="inline-block text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none" style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)" }}>Hi, I'm Sita Ganesh 👋</span>
+                  </div>
+                  <div className="flex">
+                    <span className="inline-block max-w-[600px] md:text-xl" style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)" }}>Software Engineer | Building Backend Systems &amp; AI-Powered Applications</span>
+                  </div>
+                </div>
+                <div style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-6px)" }}>
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full size-28 border">
+                    <img className="aspect-square h-full w-full object-cover" alt="Sita Ganesh" src="/profile-photo.png" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="about" className={reveal("about")} data-reveal="about"><h2 className="text-lg sm:text-xl font-bold">About</h2><div className="about-copy"><p>I'm a B.Tech CSE (AI &amp; ML) graduate who enjoys turning ideas and real-world problems into practical, reliable software. My work spans backend systems, full-stack applications, APIs, intelligent workflows, and AI-powered solutions. I enjoy going deep into technologies through documentation, experimentation, and hands-on development, with a focus on maintainable code, engineering trade-offs, and building things the right way.</p><p>Problem-solving is central to how I grow as a developer. I practice DSA and LeetCode, participate in hackathons, and build projects that push me to learn unfamiliar technologies and turn ideas into working products under real constraints. I take ownership of my work, learn quickly, and focus on solving problems that create meaningful impact.</p><p>Beyond engineering, I explore art, music, and nature. Exploring new places and spending time away from screens helps me stay grounded, calm, and open to new perspectives and creative ideas. I bring that same curiosity into engineering as I continue growing into a well-rounded developer who can understand problems, design solutions, and build and ship software that people use.</p><p><strong>Curious developer. Problem solver. Builder.</strong> Always learning, exploring, and turning ideas into software.</p></div></section>
+
+          <section id="experience" className={reveal("experience")} data-reveal="experience"><div className="experience-heading"><h2 className="text-xl font-bold">Work Experience</h2></div><div className="flex min-h-0 flex-col gap-y-3">{experiences.map((experience) => <a key={experience.company} className="block cursor-pointer" href={experience.link || "#"} onClick={(e) => !experience.link && e.preventDefault()}><div className="rounded-lg bg-card text-card-foreground flex p-3 sm:p-4"><div className="flex-none"><span className="experience-logo relative flex shrink-0 overflow-hidden rounded-full border size-10 sm:size-12 m-auto"><img className="aspect-square h-full w-full object-contain" alt={experience.company} src={experience.image} /></span></div><div className="flex-grow ml-3 sm:ml-4 items-center flex-col group"><div className="flex flex-col p-0"><div className="flex items-center justify-between gap-x-2 text-base"><h3 className="inline-flex items-center justify-center font-semibold leading-none text-xs sm:text-sm gap-1">{experience.company}<span className="inline-flex gap-x-1 flex-wrap">{experience.tags.map((tag) => <div key={tag} className="inline-flex items-center rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 align-middle text-[10px] sm:text-xs px-1.5 py-0.5">{tag}</div>)}</span><ChevronRight className="size-3 sm:size-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100 rotate-0" /></h3><div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right shrink-0">{experience.date}</div></div><div className="font-sans text-xs mt-1">{experience.role}</div></div></div></div></a>)}</div></section>
+
+          <section id="skills" className={reveal("skills")} data-reveal="skills">
+            <div className="w-full py-6 sm:py-12">
+              <div className="container mx-auto px-2 sm:px-4">
+                <div className="flex flex-col gap-6 sm:gap-10">
+                  <h2 className="text-xl md:text-3xl tracking-tighter font-bold text-center">Technologies & Skills</h2>
+                  <Carousel
+                    plugins={[
+                      AutoScroll({
+                        speed: 1,
+                        startDelay: 0,
+                      }),
+                    ]}
+                    opts={{
+                      loop: true,
+                      align: "start",
+                    }}
+                    className="relative w-full"
+                  >
+                    <CarouselContent className="-ml-2 sm:-ml-4">
+                      {[
+                        "Python", "JavaScript", "Java", "Django", "FastAPI", "Flask", "React.js",
+                        "Tailwind CSS", "ShadCN UI", "MySQL",
+                        "PostgreSQL", "SQLite", "API Integrations", "JWT", "OAuth2", "pytest", "Machine Learning", "NumPy", "Pandas",
+                        "Matplotlib", "Seaborn", "Scikit-learn", "PyTorch",
+                        "Deep Learning", "NLP", "n8n", "Agentic AI", "LangGraph", "LangChain", "Retrieval-Augmented Generation (RAG)",
+                        "AWS (EC2,Lambda)", "Vercel",
+                        "Render", "Docker", "Git & GitHub", "Postman", "Jupyter Notebooks", "Data Structures", "Operating System", "Computer Networks", "Object Oriented Programming"
+                      ].map((skill, i) => (
+                        <CarouselItem
+                          key={i}
+                          className="basis-1/2 sm:basis-1/3 lg:basis-1/6 pl-2 sm:pl-4"
+                        >
+                          <div className="flex items-center justify-center p-2 sm:p-4 hover:bg-accent transition-colors rounded-md">
+                            <span className="text-sm sm:text-base font-bold text-foreground whitespace-nowrap">
+                              {skill}
+                            </span>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="projects" className={reveal("projects")} data-reveal="projects">
+            <div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">My Projects</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Check out my latest work</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed max-w-[900px] mx-auto">I've worked on a variety of projects, from simple websites to complex web applications. Here are a few of my favorites.</p></div>
+            <div className="projects-grid">
+              {projects.map((project) => (
+                <ProjectFlipCard key={project.title} project={project} />
+              ))}
+            </div>
+          </section>
+
+          <section id="hackathons" ref={hackathonSectionRef} className={reveal("hackathons")} data-reveal="hackathons"><div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Hackathons</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">I like building things</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">I have participated in 5+ hackathons, achieving strong positions and building high-impact solutions. Working through 24-hour hackathons and building with a motivated team has shown me the endless possibilities that focused collaboration can bring to life.</p></div><div className="relative"><div className="hackathon-progress-line absolute left-[16px] top-0 bottom-0 w-[4px] bg-black dark:bg-white rounded-full z-0 origin-top" style={{ transform: `scaleY(${hackathonProgress})` }}></div><ul className="mb-4 ml-4 divide-y divide-dashed border-l border-border relative z-10">{hackathons.map((hackathon) => <li key={hackathon.title} className="relative ml-6 sm:ml-10 py-4"><div className="absolute -left-10 sm:-left-16 top-2 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full"><span className="relative flex shrink-0 overflow-hidden rounded-full border size-10 sm:size-12 m-auto"><img className="aspect-square h-full w-full object-contain" alt={hackathon.title} src={hackathon.image} /></span></div><div className="flex flex-1 flex-col justify-start gap-1"><time className="text-xs text-muted-foreground">{hackathon.date}</time><h2 className="font-semibold leading-none text-sm sm:text-base">{hackathon.title}</h2><p className="text-xs sm:text-sm text-muted-foreground">{hackathon.organization}</p><span className="prose dark:prose-invert text-xs sm:text-sm text-muted-foreground">{hackathon.description}</span></div>{hackathon.link && <div className="mt-2 flex flex-row flex-wrap items-start gap-2"><a href={hackathon.link} target="_blank" rel="noopener noreferrer"><div className="items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80 flex gap-2 text-xs" title="Competition Page"><Globe className="h-4 w-4" /><span className="hidden sm:inline">Competition Page</span></div></a></div>}</li>)}</ul></div></section>
+
+          <section id="awards" className={reveal("awards")} data-reveal="awards">
+            <div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Achievements</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Awards &amp; Recognition</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">Click on cards to view certificates. Use arrows to navigate.</p></div>
+            <AchievementsCarousel achievements={achievementsData} radius={420} />
+          </section>
+
+          <section id="contact" className={reveal("contact")} data-reveal="contact"><div className="contact-card"><div className="contact-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Contact</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Get in Touch</h2><p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">Want to chat about AI, backend systems, automation, or full stack products? Reach out through <a className="text-blue-500 hover:underline" href="https://x.com/ganesh_sita07" target="_blank" rel="noopener noreferrer">Twitter</a> or send me an email. I enjoy solving real problems and building useful things.</p></div><a className="contact-email" href="mailto:sitaganesh07@gmail.com">sitaganesh07@gmail.com <ArrowUpRight /></a></div></section>
+        </main>
+
+        <div className="floating-dock" aria-label="Quick links"><a href="#top" aria-label="Home"><House /></a><a href="#experience" aria-label="Experience"><span className="dock-file">&#9776;</span></a><a href="https://github.com/SitaGanesh" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github /></a><a href="https://www.linkedin.com/in/sita-ganesh-96281b256/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin /></a><a href="https://drive.google.com/drive/folders/1VxqTI0nfP-fPbKcKxYSg4AeMfNSlXAwi?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="Resume"><ResumeIcon /></a><a href="mailto:sitaganesh07@gmail.com" aria-label="Email"><Mail /></a><button onClick={() => setDark((value) => !value)} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>{dark ? <Sun /> : <Moon />}</button></div>
       </div>
-      <MeteorBackground />
-
-
-
-      <main id="top" className="page-wrap bg-transparent">
-        <section id="hero" data-reveal="hero">
-          <div className="mx-auto w-full max-w-2xl space-y-8">
-            <div className="gap-2 flex justify-between">
-              <div className="flex-col flex flex-1 space-y-1.5">
-                <div className="flex">
-                  <span className="inline-block text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none" style={{opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)"}}>Hi, I'm Sita Ganesh</span>
-                </div>
-                <div className="flex">
-                  <span className="inline-block max-w-[600px] md:text-xl" style={{opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)"}}>Software Engineer | Building Backend Systems &amp; AI-Powered Applications</span>
-                </div>
-              </div>
-              <div style={{opacity: 1, filter: "blur(0px)", transform: "translateY(-6px)"}}>
-                <span className="relative flex shrink-0 overflow-hidden rounded-full size-28 border">
-                  <img className="aspect-square h-full w-full object-cover" alt="Sita Ganesh" src="/profile-photo.png" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="about" className={reveal("about")} data-reveal="about"><h2 className="text-lg sm:text-xl font-bold">About</h2><div className="about-copy"><p>I'm a B.Tech CSE (AI &amp; ML) graduate who enjoys turning ideas and real-world problems into practical, reliable software. My work spans backend systems, full-stack applications, APIs, intelligent workflows, and AI-powered solutions. I enjoy going deep into technologies through documentation, experimentation, and hands-on development, with a focus on maintainable code, engineering trade-offs, and building things the right way.</p><p>Problem-solving is central to how I grow as a developer. I practice DSA and LeetCode, participate in hackathons, and build projects that push me to learn unfamiliar technologies and turn ideas into working products under real constraints. I take ownership of my work, learn quickly, and focus on solving problems that create meaningful impact.</p><p>Beyond engineering, I explore art, music, and nature. Exploring new places and spending time away from screens helps me stay grounded, calm, and open to new perspectives and creative ideas. I bring that same curiosity into engineering as I continue growing into a well-rounded developer who can understand problems, design solutions, and build and ship software that people use.</p><p><strong>Curious developer. Problem solver. Builder.</strong> Always learning, exploring, and turning ideas into software.</p></div></section>
-
-        <section id="experience" className={reveal("experience")} data-reveal="experience"><div className="experience-heading"><h2 className="text-xl font-bold">Work Experience</h2></div><div className="flex min-h-0 flex-col gap-y-3">{experiences.map((experience) => <a key={experience.company} className="block cursor-pointer" href={experience.link || "#"} onClick={(e) => !experience.link && e.preventDefault()}><div className="rounded-lg bg-card text-card-foreground flex p-3 sm:p-4"><div className="flex-none"><span className="experience-logo relative flex shrink-0 overflow-hidden rounded-full border size-10 sm:size-12 m-auto"><img className="aspect-square h-full w-full object-contain" alt={experience.company} src={experience.image} /></span></div><div className="flex-grow ml-3 sm:ml-4 items-center flex-col group"><div className="flex flex-col p-0"><div className="flex items-center justify-between gap-x-2 text-base"><h3 className="inline-flex items-center justify-center font-semibold leading-none text-xs sm:text-sm gap-1">{experience.company}<span className="inline-flex gap-x-1 flex-wrap">{experience.tags.map((tag) => <div key={tag} className="inline-flex items-center rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 align-middle text-[10px] sm:text-xs px-1.5 py-0.5">{tag}</div>)}</span><ChevronRight className="size-3 sm:size-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100 rotate-0" /></h3><div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right shrink-0">{experience.date}</div></div><div className="font-sans text-xs mt-1">{experience.role}</div></div></div></div></a>)}</div></section>
-
-        <section id="skills" className={reveal("skills")} data-reveal="skills">
-          <div className="w-full py-6 sm:py-12">
-            <div className="container mx-auto px-2 sm:px-4">
-              <div className="flex flex-col gap-6 sm:gap-10">
-                <h2 className="text-xl md:text-3xl tracking-tighter font-bold text-center">Technologies & Skills</h2>
-                <Carousel
-                  plugins={[
-                    AutoScroll({
-                      speed: 1,
-                      startDelay: 0,
-                    }),
-                  ]}
-                  opts={{
-                    loop: true,
-                    align: "start",
-                  }}
-                  className="relative w-full"
-                >
-                  <CarouselContent className="-ml-2 sm:-ml-4">
-                    {[
-                      "Python","JavaScript","Java","Django", "FastAPI","Flask", "React.js",
-                      "Tailwind CSS", "ShadCN UI", "MySQL", 
-                      "PostgreSQL", "SQLite","API Integrations","JWT","OAuth2","pytest","Machine Learning", "NumPy", "Pandas", 
-                      "Matplotlib", "Seaborn", "Scikit-learn", "PyTorch", 
-                      "Deep Learning", "NLP", "n8n", "Agentic AI","LangGraph","LangChain","Retrieval-Augmented Generation (RAG)",
-                      "AWS (EC2,Lambda)", "Vercel", 
-                      "Render", "Docker", "Git & GitHub", "Postman", "Jupyter Notebooks", "Data Structures","Operating System","Computer Networks","Object Oriented Programming"
-                    ].map((skill, i) => (
-                      <CarouselItem
-                        key={i}
-                        className="basis-1/2 sm:basis-1/3 lg:basis-1/6 pl-2 sm:pl-4"
-                      >
-                        <div className="flex items-center justify-center p-2 sm:p-4 hover:bg-accent transition-colors rounded-md">
-                          <span className="text-sm sm:text-base font-bold text-foreground whitespace-nowrap">
-                            {skill}
-                          </span>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="projects" className={reveal("projects")} data-reveal="projects">
-          <div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">My Projects</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Check out my latest work</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed max-w-[900px] mx-auto">I've worked on a variety of projects, from simple websites to complex web applications. Here are a few of my favorites.</p></div>
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <ProjectFlipCard key={project.title} project={project} />
-            ))}
-          </div>
-        </section>
-
-        <section id="hackathons" ref={hackathonSectionRef} className={reveal("hackathons")} data-reveal="hackathons"><div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Hackathons</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">I like building things</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">I have participated in 5+ hackathons, achieving strong positions and building high-impact solutions. Working through 24-hour hackathons and building with a motivated team has shown me the endless possibilities that focused collaboration can bring to life.</p></div><div className="relative"><div className="hackathon-progress-line absolute left-[16px] top-0 bottom-0 w-[4px] bg-black dark:bg-white rounded-full z-0 origin-top" style={{transform: `scaleY(${hackathonProgress})`}}></div><ul className="mb-4 ml-4 divide-y divide-dashed border-l border-border relative z-10">{hackathons.map((hackathon) => <li key={hackathon.title} className="relative ml-6 sm:ml-10 py-4"><div className="absolute -left-10 sm:-left-16 top-2 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full"><span className="relative flex shrink-0 overflow-hidden rounded-full border size-10 sm:size-12 m-auto"><img className="aspect-square h-full w-full object-contain" alt={hackathon.title} src={hackathon.image} /></span></div><div className="flex flex-1 flex-col justify-start gap-1"><time className="text-xs text-muted-foreground">{hackathon.date}</time><h2 className="font-semibold leading-none text-sm sm:text-base">{hackathon.title}</h2><p className="text-xs sm:text-sm text-muted-foreground">{hackathon.organization}</p><span className="prose dark:prose-invert text-xs sm:text-sm text-muted-foreground">{hackathon.description}</span></div>{hackathon.link && <div className="mt-2 flex flex-row flex-wrap items-start gap-2"><a href={hackathon.link} target="_blank" rel="noopener noreferrer"><div className="items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80 flex gap-2 text-xs" title="Competition Page"><Globe className="h-4 w-4" /><span className="hidden sm:inline">Competition Page</span></div></a></div>}</li>)}</ul></div></section>
-
-        <section id="awards" className={reveal("awards")} data-reveal="awards">
-          <div className="replica-section-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Achievements</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Awards &amp; Recognition</h2><p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">Click on cards to view certificates. Use arrows to navigate.</p></div>
-          <AchievementsCarousel achievements={achievementsData} radius={420} />
-        </section>
-
-        <section id="contact" className={reveal("contact")} data-reveal="contact"><div className="contact-card"><div className="contact-heading"><div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">Contact</div><h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Get in Touch</h2><p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">Want to chat about AI, backend systems, automation, or full stack products? Reach out through <a className="text-blue-500 hover:underline" href="https://x.com/ganesh_sita07" target="_blank" rel="noopener noreferrer">Twitter</a> or send me an email. I enjoy solving real problems and building useful things.</p></div><a className="contact-email" href="mailto:sitaganesh07@gmail.com">sitaganesh07@gmail.com <ArrowUpRight /></a></div></section>
-      </main>
-
-      <div className="floating-dock" aria-label="Quick links"><a href="#top" aria-label="Home"><House /></a><a href="#experience" aria-label="Experience"><span className="dock-file">&#9776;</span></a><a href="https://github.com/SitaGanesh" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github /></a><a href="https://www.linkedin.com/in/sita-ganesh-96281b256/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin /></a><a href="mailto:sitaganesh07@gmail.com" aria-label="Email"><Mail /></a><button onClick={() => setDark((value) => !value)} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>{dark ? <Sun /> : <Moon />}</button></div>
-    </div>
+    </>
   );
 }
 
 function SectionTitle({ title }: { title: string }) { return <h2 className="section-title">{title}</h2>; }
+
+function ResumeIcon() {
+  return (
+    <svg
+      className="resume-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 60 60"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M2,2h39v7h2V1c0-0.6-0.4-1-1-1H1C0.4,0,0,0.4,0,1v58c0,0.6,0.4,1,1,1h32v-2H2V2z" />
+      <path d="M43.7,21.3l-2.8-6.6c-0.1-0.4-0.5-0.6-0.9-0.6s-0.7,0.2-0.9,0.6l-2.8,6.6C36.1,21.5,36,21.7,36,22v31v6c0,0.6,0.4,1,1,1h6c0.6,0,1-0.4,1-1v-6V22C44,21.7,43.9,21.4,43.7,21.3z M38,23h4v29h-4V23z M40,17.5l1.5,3.5h-3L40,17.5z M42,58h-4v-4h4V58z" />
+      <path d="M59,38H48c-0.6,0-1,0.4-1,1v20c0,0.6,0.4,1,1,1h11c0.6,0,1-0.4,1-1V39C60,38.4,59.6,38,59,38z M58,40v5h-9v-5H58z M49,58V47h9v11H49z" />
+      <path d="M27,11c0-3.3-2.7-6-6-6s-6,2.7-6,6s2.7,6,6,6S27,14.3,27,11z M17,11c0-2.2,1.8-4,4-4s4,1.8,4,4s-1.8,4-4,4S17,13.2,17,11z" />
+      <rect x="15" y="20" width="12" height="2" />
+      <rect x="15" y="25" width="12" height="2" />
+      <rect x="6" y="31" width="15" height="2" />
+      <rect x="6" y="36" width="26" height="2" />
+      <rect x="6" y="41" width="26" height="2" />
+      <rect x="6" y="46" width="8" height="2" />
+      <rect x="6" y="51" width="11" height="2" />
+      <rect x="21" y="46" width="8" height="2" />
+      <rect x="21" y="51" width="11" height="2" />
+    </svg>
+  );
+}

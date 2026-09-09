@@ -7,10 +7,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Meteors } from "@/components/ui/meteors";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +37,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,11 +74,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kintan Jain | AI & Web Developer" },
-      { name: "description", content: "Kintan Jain — AI and web developer, automation enthusiast, and community leader." },
-      { name: "author", content: "Kintan Jain" },
-      { property: "og:title", content: "Kintan Jain | AI & Web Developer" },
-      { property: "og:description", content: "AI and web developer, automation enthusiast, and community leader." },
+      { title: "Sita Ganesh | Software Engineer" },
+      { name: "description", content: "Sita Ganesh — Software Engineer, Building Backend Systems & AI-Powered Applications" },
+      { name: "author", content: "Sita Ganesh" },
+      { property: "og:title", content: "Sita Ganesh | Software Engineer" },
+      { property: "og:description", content: "Software Engineer, Building Backend Systems & AI-Powered Applications" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -90,7 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -107,11 +104,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="relative xl:px-32">
+        <div
+          className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none -scale-x-100"
+          aria-hidden="true"
+        >
+          <Meteors
+            number={30}
+            minDelay={0.2}
+            maxDelay={1.5}
+            minDuration={4}
+            maxDuration={10}
+          />
+        </div>
         {children}
         <Scripts />
       </body>

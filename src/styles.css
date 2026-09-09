@@ -28,7 +28,24 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --animate-meteor-effect: meteor-effect 5s linear infinite;
+  --animate-meteor-effect: meteor-effect linear infinite;
+  --animate-meteor: meteor 5s linear infinite;
+
+  @keyframes meteor {
+    0% {
+      transform: rotate(var(--angle)) translateX(0);
+      opacity: 1;
+    }
+
+    70% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: rotate(var(--angle)) translateX(-500px);
+      opacity: 0;
+    }
+  }
 }
 
 :root {
@@ -109,6 +126,7 @@
 @utility portfolio-shell {
   min-height: 100vh;
   position: relative;
+  z-index: 2;
   overflow-x: hidden;
   isolation: isolate;
 }
@@ -135,8 +153,8 @@
   text-align: center;
 }
 
-.replica-section-heading > div,
-.contact-heading > div {
+.replica-section-heading>div,
+.contact-heading>div {
   margin-bottom: -4px;
 }
 
@@ -193,6 +211,86 @@
 @utility is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── Galaxy Preloader ────────────────────────────────────── */
+.galaxy-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #07111c;
+  isolation: isolate;
+  pointer-events: auto;
+}
+
+.galaxy-preloader-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.galaxy-preloader-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 1;
+  pointer-events: none;
+  animation: galaxy-text-pulse 1.4s ease-in-out infinite;
+}
+
+.galaxy-preloader-title {
+  font: 600 16px/1 var(--font-display, "Space Grotesk", sans-serif);
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 0 18px rgba(180, 200, 255, 0.25);
+}
+
+.galaxy-preloader-subtitle {
+  font: 500 11px/1 var(--font-sans, "DM Sans", sans-serif);
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@keyframes galaxy-text-pulse {
+
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Exit: text fades, container stops blocking */
+.galaxy-preloader-exiting .galaxy-preloader-text {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.galaxy-preloader-exiting {
+  pointer-events: none;
+}
+
+/* Hide portfolio while preloader is active — prevents flash */
+.portfolio-shell:not(.is-loaded) {
+  visibility: hidden;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .galaxy-preloader-text {
+    animation-duration: 2.5s;
+  }
 }
 
 /* Loader */
@@ -339,30 +437,57 @@
 }
 
 @keyframes loader-grid-drift {
-  from { background-position: 0 0; }
-  to { background-position: 0 44px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 44px;
+  }
 }
 
 @keyframes loader-orbit {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes loader-orbit-reverse {
-  to { transform: rotate(-298deg) scaleY(.56); }
+  to {
+    transform: rotate(-298deg) scaleY(.56);
+  }
 }
 
 @keyframes loader-scan {
-  0%, 20% { transform: translateX(-100%); }
-  70%, 100% { transform: translateX(100%); }
+
+  0%,
+  20% {
+    transform: translateX(-100%);
+  }
+
+  70%,
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes loader-mark {
-  50% { text-shadow: 0 0 24px rgb(126 238 214 / 55%); transform: scale(1.04); }
+  50% {
+    text-shadow: 0 0 24px rgb(126 238 214 / 55%);
+    transform: scale(1.04);
+  }
 }
 
 @keyframes loader-text-pulse {
-  0%, 100% { opacity: .6; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: .6;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes loader-progress {
@@ -375,48 +500,28 @@
   }
 }
 
-/* Meteors */
-.meteor-background {
+/* ── Meteors ─────────────────────────────────────────────── */
+/* .meteor-background {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   overflow: hidden;
-}
+} */
 
-.meteor-item {
-  position: absolute;
-  height: 2px;
-  width: 2px;
-  border-radius: 9999px;
-  background: #64748b;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
-  transform: rotate(215deg);
-}
-
-.dark .meteor-item {
-  background: #94a3b8;
-}
-
-/* Meteor tail */
-.meteor-item::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 1px;
-  background: linear-gradient(to right, #64748b, transparent);
-}
-
-.dark .meteor-item::before {
-  background: linear-gradient(to right, #cbd5e1, transparent);
-}
-
+/*
+  Tailwind's .animate-meteor-effect applies:
+    animation: meteor <duration> linear infinite
+  where <duration> come/* .animate-meteor-effect in Tailwind v4 reads from:
+     --animate-meteor-effect: meteor-effect linear infinite
+   defined in @theme. Duration and delay come from inline styles per-meteor.
+   We reinforce with sub-properties here as a reliable fallback. */
 .animate-meteor-effect {
   animation-name: meteor-effect;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  /* fallback duration if inline style is missing */
+  animation-duration: 15s;
 }
 
 @keyframes meteor-effect {
@@ -435,7 +540,27 @@
   }
 }
 
+/* Star dots – twinkling fixed stars in the background */
+.star-dot {
+  position: absolute;
+  border-radius: 9999px;
+  background: #ffffff;
+  animation: star-twinkle ease-in-out infinite;
+}
 
+@keyframes star-twinkle {
+
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.5);
+  }
+}
 
 /* Header */
 .site-header {
@@ -1296,7 +1421,7 @@
 
 #awards {
   position: relative;
-  padding: 80px 0;
+  padding: 10px 0;
 }
 
 #awards::before {
@@ -1724,7 +1849,7 @@
 /* Contact */
 .contact-card {
   text-align: center;
-  padding: 60px 20px;
+  padding: 20px 20px;
 }
 
 .contact-card .section-title {
@@ -1829,6 +1954,13 @@
   height: 18px;
 }
 
+.floating-dock .resume-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  stroke: none;
+}
+
 .dock-file {
   font-size: 16px;
   line-height: 1;
@@ -1901,7 +2033,7 @@
   }
 
   .page-wrap>section {
-    padding-block: 60px;
+    padding-block: 20px;
   }
 
   .floating-dock {
