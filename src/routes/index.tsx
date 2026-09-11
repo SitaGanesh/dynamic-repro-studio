@@ -270,7 +270,7 @@ function Portfolio() {
               <div className="gap-2 flex justify-between">
                 <div className="flex-col flex flex-1 space-y-1.5">
                   <div className="flex">
-                    <span className="inline-block text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none" style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)" }}>Hi, I'm Sita Ganesh 👋</span>
+                    <span className="inline-block text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none" style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)" }}>Hi, I'm Sita Ganesh <span className="hero-greeting-emoji" aria-hidden="true">👋</span></span>
                   </div>
                   <div className="flex">
                     <span className="inline-block max-w-[600px] md:text-xl" style={{ opacity: 1, filter: "blur(0px)", transform: "translateY(-8px)" }}>Software Engineer | Building Backend Systems &amp; AI-Powered Applications</span>
